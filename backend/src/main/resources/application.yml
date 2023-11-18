@@ -1,0 +1,18 @@
+server:
+  port: 8081
+object-store:
+  endpoint: 'http://127.0.0.1:9000'
+  access-key: '9Z765uL2Llk8D40n5B0Q'
+  secret-key: 'LyYRSEXjLMHsPvrytGcg6GoHaBz85wptLcpeHlId'
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ecom
+    username: user
+    password: password
+    driverClassName: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+    show-sql: true
