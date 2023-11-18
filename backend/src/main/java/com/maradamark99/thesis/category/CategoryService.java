@@ -5,6 +5,7 @@ import java.util.List;
 public interface CategoryService {
 
     List<CategoryDTO> getAll();
+    List<CategoryDTO> getTopLevel();
     CategoryDTO getById(long id);
     List<CategoryDTO> getChildrenByParentId(long id);
     void deleteById(long id);

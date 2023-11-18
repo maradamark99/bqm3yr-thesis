@@ -26,6 +26,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<CategoryDTO> getTopLevel() {
+        return categoryRepository.findByParentIdIsNull()
+                .stream()
+                .map(categoryMapper::entityToDto)
+                .toList();
+    }
+
+    @Override
     public CategoryDTO getById(long id) {
         var category = categoryRepository.findById(id);
         if (category.isEmpty()) {
