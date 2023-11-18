@@ -19,13 +19,18 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getAll());
     }
 
+    @GetMapping("/top-level")
+    public ResponseEntity<List<CategoryDTO>> getTopLevel() {
+        return ResponseEntity.ok(categoryService.getTopLevel());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<CategoryDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.getById(id));
     }
 
     @GetMapping("/{id}/children")
-    public ResponseEntity<List<CategoryDTO>> getChildrenByParentID(@PathVariable() long id) {
+    public ResponseEntity<List<CategoryDTO>> getChildrenByParentID(@PathVariable long id) {
         return ResponseEntity.ok(categoryService.getChildrenByParentId(id));
     }
 
