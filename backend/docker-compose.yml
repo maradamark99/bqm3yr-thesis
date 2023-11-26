@@ -1,0 +1,48 @@
+version: '3.0'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8081:8080'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      object-store:
+        condition: service_started
+  postgres:
+    image: 'postgres:13-alpine'
+    restart: on-failure
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./data/db:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}'
+      interval: 1s
+      timeout: 5s
+      retries: 10
+  object-store:
+    image: 'minio/minio:latest'
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - type: bind
+        source: ./data/object-store
+        target: /data
+    command: server /data
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+  adminer:
+    image: dockette/adminer
+    ports:
+      - '8080:80'
