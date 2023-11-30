@@ -1,6 +1,5 @@
 package com.maradamark99.thesis.storage;
 
-import io.minio.MinioClient;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -17,13 +16,8 @@ public class StorageConfig {
 
     private String secretKey;
 
-    @Bean
-    public MinioClient minioClient() {
-        return MinioClient
-                .builder()
-                .endpoint(endpoint)
-                .credentials(accessKey, secretKey)
-                .build();
-    }
-
 }
+
+
+
+
