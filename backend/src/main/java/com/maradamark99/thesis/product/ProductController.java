@@ -1,7 +1,6 @@
 package com.maradamark99.thesis.product;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -11,8 +10,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -38,19 +35,4 @@ public class ProductController {
         log.info("Product: {} successfully created with id {}", productDTO, createdId);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdId);
     }
-
-    @PostMapping("/{id}/upload-media")
-    public ResponseEntity<Void> upload(
-            @PathVariable long id,
-            @RequestParam(value = "file") @NotNull MultipartFile file) throws IOException {
-        productService.uploadMedia(id, file);
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable long id) {
-        productService.deleteById(id);
-        return ResponseEntity.noContent().build();
-    }
-
 }
