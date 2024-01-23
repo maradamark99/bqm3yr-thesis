@@ -15,7 +15,8 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @Builder
 @EqualsAndHashCode
 public class Media {
@@ -37,6 +38,11 @@ public class Media {
 
     @NotBlank
     private String extension;
+
+    @Transient
+    public String getPath() {
+        return "/%s/%s.%s".formatted(bucket, key, extension);
+    }
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
