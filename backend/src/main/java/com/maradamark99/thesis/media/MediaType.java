@@ -4,7 +4,8 @@ import java.util.Arrays;
 
 public enum MediaType {
     IMAGE,
-    VIDEO;
+    VIDEO,
+    DOCUMENT;
 
     public static MediaType of(String value) {
         return Arrays.stream(MediaType.values())
