@@ -43,11 +43,18 @@ public class ProductController {
     }
 
     @PostMapping("/{id}/upload-media")
-    public ResponseEntity<Void> upload(
+    public ResponseEntity<Void> uploadMedia(
             @PathVariable long id,
-            @RequestParam(value = "file") @NotNull MultipartFile file,
-            @RequestParam(value = "isThumbnail", defaultValue = "false") boolean isThumbnail) throws IOException {
-        productService.uploadProductMedia(id, file, isThumbnail);
+            @RequestParam(value = "file") @NotNull MultipartFile file) throws IOException {
+        productService.uploadProductMedia(id, file);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/upload-thumbnail")
+    public ResponseEntity<Void> uploadThumbnail(
+            @PathVariable long id,
+            @RequestParam(value = "file") @NotNull MultipartFile file) throws IOException {
+        productService.uploadThumbnailImage(id, file);
         return ResponseEntity.noContent().build();
     }
 

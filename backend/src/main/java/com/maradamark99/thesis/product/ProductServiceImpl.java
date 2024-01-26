@@ -4,8 +4,11 @@ import com.maradamark99.thesis.category.CategoryRepository;
 import com.maradamark99.thesis.exception.ResourceNotFoundException;
 import com.maradamark99.thesis.media.Media;
 import com.maradamark99.thesis.media.MediaInfo;
+import com.maradamark99.thesis.media.MediaType;
 import com.maradamark99.thesis.storage.Buckets;
 import com.maradamark99.thesis.storage.StorageClient;
+
+import jakarta.activation.UnsupportedDataTypeException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Service
 @RequiredArgsConstructor
@@ -49,29 +54,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Transactional
-    public void uploadProductMedia(final long id, MultipartFile file, boolean isThumbnail) throws IOException {
-        final var product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.apply(id)));
-        final var bucket = buckets.getProduct();
-        final var mediaInfo = MediaInfo.fromMimeType(file.getContentType());
-        final var key = "/%s/".formatted(mediaInfo.getMediaType().toString().toLowerCase()) + UUID.randomUUID();
-        final var media = Media.builder()
-                .bucket(bucket)
-                .key(key)
-                .mediaType(mediaInfo.getMediaType())
-                .extension(mediaInfo.getExtension())
-                .build();
-        if (isThumbnail) {
-            product.setThumbnailImage(media);
-        } else {
-            product.getMedia().add(media);
-        }
-        productRepository.save(product);
-        storageClient.putObject(
-                bucket,
-                key + "." + mediaInfo.getExtension(),
-                file.getBytes());
+    public void uploadThumbnailImage(final long id, final MultipartFile file) throws IOException {
+        doUploadProductMedia(
+                id,
+                file,
+                (i) -> i.getMediaType().equals(MediaType.IMAGE),
+                (p, m) -> p.setThumbnailImage(m));
+    }
+
+    @Override
+    public void uploadProductMedia(final long id, final MultipartFile file) throws IOException {
+        doUploadProductMedia(
+                id,
+                file,
+                (i) -> true,
+                (p, m) -> p.getMedia().add(m));
     }
 
     @Override
@@ -80,6 +77,32 @@ public class ProductServiceImpl implements ProductService {
         var product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.apply(id)));
         productRepository.delete(product);
+    }
+
+    @Transactional
+    private void doUploadProductMedia(final long id, MultipartFile file, Predicate<MediaInfo> mediaInfoFilter,
+            BiConsumer<Product, Media> productMediaAction)
+            throws IOException {
+        final var product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.apply(id)));
+        final var mediaInfo = MediaInfo.fromMimeType(file.getContentType());
+        final var bucket = buckets.getProduct();
+        final var key = UUID.randomUUID().toString();
+        final var media = Media.builder()
+                .bucket(bucket)
+                .key(key)
+                .mediaType(mediaInfo.getMediaType())
+                .extension(mediaInfo.getExtension())
+                .build();
+        if (!mediaInfoFilter.test(mediaInfo)) {
+            throw new UnsupportedDataTypeException();
+        }
+        productMediaAction.accept(product, media);
+        productRepository.save(product);
+        storageClient.putObject(
+                bucket,
+                key + "." + mediaInfo.getExtension(),
+                file.getBytes());
     }
 
 }

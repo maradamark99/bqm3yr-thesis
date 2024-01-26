@@ -12,8 +12,9 @@ public interface ProductService {
 
     Long create(ProductDTO productDTO);
 
-    void uploadProductMedia(long id, MultipartFile file, boolean isThumbnail) throws IOException;
-
     void deleteById(long id);
 
+    void uploadProductMedia(long id, MultipartFile file) throws IOException;
+
+    void uploadThumbnailImage(long id, MultipartFile file) throws IOException;
 }
