@@ -9,11 +9,13 @@ import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @EqualsAndHashCode
 @ToString
 public class ProductDTO {
@@ -30,6 +32,10 @@ public class ProductDTO {
     // TODO: add enum validation
     @NotNull
     private ProductCondition condition;
+
+    List<Long> categories;
+
+    private String thumbnailUrl;
 
     @NotNull
     @DecimalMin(value = "0.0", inclusive = false)
