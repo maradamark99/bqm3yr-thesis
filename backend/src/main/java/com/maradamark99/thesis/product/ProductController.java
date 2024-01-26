@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -23,7 +25,8 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<Page<ProductDTO>> getAll(@PageableDefault(sort={"createdAt"}, direction = Sort.Direction.DESC, size = 15) Pageable pageable) {
+    public ResponseEntity<Page<ProductDTO>> getAll(
+            @PageableDefault(sort = { "createdAt" }, direction = Sort.Direction.DESC, size = 15) Pageable pageable) {
         return ResponseEntity.ok(productService.getAll(pageable));
     }
 
@@ -42,8 +45,9 @@ public class ProductController {
     @PostMapping("/{id}/upload-media")
     public ResponseEntity<Void> upload(
             @PathVariable long id,
-            @RequestParam(value = "file") @NotNull MultipartFile file) throws IOException {
-        productService.uploadMedia(id, file);
+            @RequestParam(value = "file") @NotNull MultipartFile file,
+            @RequestParam(value = "isThumbnail", defaultValue = "false") boolean isThumbnail) throws IOException {
+        productService.uploadProductMedia(id, file, isThumbnail);
         return ResponseEntity.noContent().build();
     }
 

@@ -13,14 +13,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "products", indexes = {@Index(columnList = "name"), @Index(columnList = "condition")})
+@Table(name = "products", indexes = { @Index(columnList = "name"), @Index(columnList = "condition") })
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -43,19 +41,16 @@ public class Product {
     private String description;
 
     @ManyToMany(targetEntity = Category.class, fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "product_categories",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id"))
-    private List<Category> categories;
+    @JoinTable(name = "product_categories", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<Category> categories;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "product_media",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "media_id")
-    )
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(name = "product_media", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
     private final Set<Media> media = new LinkedHashSet<>();
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, optional = true)
+    @JoinColumn(name = "thumbnail_image_id")
+    private Media thumbnailImage;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -79,13 +74,28 @@ public class Product {
         this.updatedAt = LocalDateTime.now();
         final var minImageCount = 3;
         if (this.isListed) {
+            checkThumbnailImage();
             var imageCount = this.getMedia()
                     .stream()
                     .filter(m -> m.getMediaType() == MediaType.IMAGE)
                     .count();
             if (imageCount < minImageCount) {
-                throw new IllegalStateException("Cannot update a listed product with less than " + minImageCount + " images");
+                throw new IllegalStateException(
+                        "Cannot update a listed product with less than " + minImageCount + " images");
             }
+        }
+    }
+
+    private void checkThumbnailImage() {
+        if (this.thumbnailImage == null) {
+            this.thumbnailImage = this.getMedia()
+                    .stream()
+                    .filter(m -> m.getMediaType() == MediaType.IMAGE)
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("Product must have at least one image"));
+        }
+        if (!this.thumbnailImage.getMediaType().equals(MediaType.IMAGE)) {
+            throw new IllegalStateException("Thumbnail image must be an image");
         }
     }
 

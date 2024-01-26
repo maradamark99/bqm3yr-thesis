@@ -1,14 +1,21 @@
 package com.maradamark99.thesis.product;
 
 import com.maradamark99.thesis.category.Category;
+import com.maradamark99.thesis.storage.StorageConfig;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Set;
 
 @Component
+@RequiredArgsConstructor
 public class ProductMapper {
 
-    public Product dtoToEntity(ProductDTO dto, List<Category> categories) {
+    private final StorageConfig storageConfig;
+
+    public Product dtoToEntity(ProductDTO dto, Set<Category> categories) {
         return Product.builder()
                 .name(dto.getName())
                 .description(dto.getDescription())
@@ -19,12 +26,18 @@ public class ProductMapper {
     }
 
     public ProductDTO entityToDto(Product entity) {
+        var thumbnailImg = entity.getThumbnailImage();
+        String thumbnailUrl = null;
+        if (thumbnailImg != null) {
+            thumbnailUrl = storageConfig.getEndpoint() + thumbnailImg.getPath();
+        }
         return ProductDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
                 .description(entity.getDescription())
                 .condition(entity.getCondition())
                 .currentPrice(entity.getCurrentPrice())
+                .thumbnailUrl(thumbnailUrl)
                 .createdAt(entity.getCreatedAt())
                 .build();
     }
