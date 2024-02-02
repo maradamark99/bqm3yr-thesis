@@ -1,4 +1,4 @@
-package com.maradamark99.thesis.util;
+package com.maradamark99.thesis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AppConfig {
     @Bean
-    public ObjectMapper objectMapper() {
+    ObjectMapper objectMapper() {
         var mapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .build();

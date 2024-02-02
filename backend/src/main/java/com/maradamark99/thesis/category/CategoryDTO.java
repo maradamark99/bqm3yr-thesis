@@ -6,7 +6,8 @@ import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @Builder
 @EqualsAndHashCode
 @ToString
@@ -20,5 +21,7 @@ public class CategoryDTO {
 
     @Nullable
     private Long parentId;
+
+    private boolean isLeaf;
 
 }

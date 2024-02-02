@@ -10,6 +10,7 @@ public class CategoryMapper {
         return CategoryDTO.builder()
                 .id(category.getId())
                 .value(category.getValue())
+                .isLeaf(category.isLeaf())
                 .parentId(parent != null ? parent.getId() : null)
                 .build();
     }

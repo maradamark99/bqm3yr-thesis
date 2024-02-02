@@ -4,12 +4,14 @@ import java.util.List;
 
 public interface CategoryService {
 
-    List<CategoryDTO> getAll();
-    List<CategoryDTO> getTopLevel();
+    List<CategoryDTO> getAll(Long parentId);
+
     CategoryDTO getById(long id);
-    List<CategoryDTO> getChildrenByParentId(long id);
+
     void deleteById(long id);
+
     long update(CategoryDTO categoryDTO, Long id);
+
     long create(CategoryDTO categoryDTO);
 
 }
