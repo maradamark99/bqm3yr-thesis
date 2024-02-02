@@ -6,37 +6,39 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "categories")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @Builder
 public class Category {
 
     @Id
-    @SequenceGenerator(
-            name = "category_sequence",
-            sequenceName = "category_sequence",
-            allocationSize = 1)
+    @SequenceGenerator(name = "category_sequence", sequenceName = "category_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_sequence")
-    Long id;
+    private Long id;
 
     @NotBlank
     @Column(nullable = false, length = 100, unique = true)
-    String value;
+    private String value;
 
     @ManyToOne
     @JoinColumn(name = "parent_category")
-    protected Category parent;
+    private Category parent;
 
     @OneToMany(mappedBy = "parent")
-    protected List<Category> children;
+    private List<Category> children;
 
     @ManyToMany(mappedBy = "categories")
-    List<Product> products;
+    private List<Product> products;
+
+    @Transient
+    public boolean isLeaf() {
+        return children == null || children.isEmpty();
+    }
 
     // TODO: add images/icons
 

@@ -14,24 +14,15 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    @GetMapping
-    public ResponseEntity<List<CategoryDTO>> getAll() {
-        return ResponseEntity.ok(categoryService.getAll());
-    }
 
-    @GetMapping("/top-level")
-    public ResponseEntity<List<CategoryDTO>> getTopLevel() {
-        return ResponseEntity.ok(categoryService.getTopLevel());
+    @GetMapping
+    public ResponseEntity<List<CategoryDTO>> getAll(@RequestParam(required = false) Long parentId) {
+        return ResponseEntity.ok(categoryService.getAll(parentId));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CategoryDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.getById(id));
-    }
-
-    @GetMapping("/{id}/children")
-    public ResponseEntity<List<CategoryDTO>> getChildrenByParentID(@PathVariable long id) {
-        return ResponseEntity.ok(categoryService.getChildrenByParentId(id));
     }
 
     @PostMapping
