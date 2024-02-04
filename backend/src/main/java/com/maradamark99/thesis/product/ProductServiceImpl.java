@@ -7,6 +7,7 @@ import com.maradamark99.thesis.media.MediaInfo;
 import com.maradamark99.thesis.media.MediaType;
 import com.maradamark99.thesis.storage.Buckets;
 import com.maradamark99.thesis.storage.StorageClient;
+import com.maradamark99.thesis.util.CaseInsensitivePageable;
 
 import jakarta.activation.UnsupportedDataTypeException;
 import jakarta.transaction.Transactional;
@@ -38,10 +39,17 @@ public class ProductServiceImpl implements ProductService {
 
     private final Buckets buckets;
 
-    public Page<ProductDTO> getAll(Pageable pageable) {
-        return productRepository
-                .findAll(pageable)
-                .map(productMapper::entityToDto);
+    public Page<ProductDTO> getAll(Pageable pageable, String category) {
+        var products = category == null ? productRepository.findAll(pageable)
+                : productRepository.findAllByCategoryName(pageable, category);
+        return products.map(productMapper::entityToDto);
+    }
+
+    @Override
+    public ProductView getById(long id) {
+        return productMapper.entityToView(productRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(PRODUCT_NOT_FOUND_MESSAGE.apply(id))));
     }
 
     @Override

@@ -8,7 +8,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductService {
 
-    Page<ProductDTO> getAll(Pageable pageable);
+    Page<ProductDTO> getAll(Pageable pageable, String category);
+
+    ProductView getById(long id);
 
     Long create(ProductDTO productDTO);
 

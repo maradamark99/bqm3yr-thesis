@@ -1,10 +1,15 @@
-import { ProductCatalog } from './components/ProductCatalog';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Home } from './pages/Home';
+import { ProductView } from './pages/ProductView';
 
 function App() {
 	return (
-		<div className="flex justify-center h-screen bg-slate-50 overflow-scroll">
-			<ProductCatalog />
-		</div>
+		<BrowserRouter>
+			<Routes>
+				<Route path="/" element={<Home />} />
+				<Route path="/:id" element={<ProductView />} />
+			</Routes>
+		</BrowserRouter>
 	);
 }
 
