@@ -1,17 +1,21 @@
 import { ProductCard } from './ProductCard';
-import { useProducts } from '../hooks/product';
+import { Pageable, Product } from '../types';
 
-export function ProductCatalog() {
-	const products = useProducts();
-
+export function ProductCatalog({
+	className,
+	products,
+}: {
+	className?: string;
+	products?: Pageable<Product | undefined>;
+}) {
 	return (
-		<div className="h-2/3 pt-10 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+		<div className={className}>
 			{products?.content.map((product) => (
 				<div
-					key={product.id}
+					key={product?.id}
 					className="flex justify-center items-center"
 				>
-					<ProductCard product={product} />
+					<ProductCard product={product!} />
 				</div>
 			))}
 		</div>

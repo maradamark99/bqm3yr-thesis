@@ -26,13 +26,14 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<Page<ProductDTO>> getAll(
+            @RequestParam(value = "category", required = false) String category,
             @PageableDefault(sort = { "createdAt" }, direction = Sort.Direction.DESC, size = 15) Pageable pageable) {
-        return ResponseEntity.ok(productService.getAll(pageable));
+        return ResponseEntity.ok(productService.getAll(pageable, category));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getById(@PathVariable Long id) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ProductView> getById(@PathVariable Long id) {
+        return ResponseEntity.ok().body(productService.getById(id));
     }
 
     @PostMapping
