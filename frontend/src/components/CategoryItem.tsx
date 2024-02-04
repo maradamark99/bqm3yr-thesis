@@ -1,6 +1,6 @@
 import { Category } from '../types';
 import { useSubCategories } from '../hooks/category';
-// import { useProductContext } from '../pages/Home';
+import { useProductContext } from '../pages/Home';
 
 export function CategoryItem({
 	category,
@@ -11,7 +11,7 @@ export function CategoryItem({
 	className?: string;
 	setCategories: React.Dispatch<React.SetStateAction<Category[][]>>;
 }) {
-	// const { setPageableOptions, setCategory } = useProductContext();
+	const { setPageableOptions, setCategory } = useProductContext();
 
 	async function onClick() {
 		if (category.leaf) {
@@ -21,8 +21,8 @@ export function CategoryItem({
 					orderBy: 'default',
 				},
 			};
-			/* setPageableOptions(pageableOptions);
-			setCategory(category.value); */
+			setPageableOptions(pageableOptions);
+			setCategory(category.value);
 		} else {
 			useSubCategories(category.id).then((data) => {
 				setCategories((prev) => [...prev, data]);
