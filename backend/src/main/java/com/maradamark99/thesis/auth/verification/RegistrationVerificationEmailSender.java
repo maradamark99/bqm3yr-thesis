@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import com.maradamark99.thesis.auth.email.EmailService;
+import com.maradamark99.thesis.email.EmailService;
 
 import lombok.RequiredArgsConstructor;
 
